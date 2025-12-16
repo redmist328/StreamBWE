@@ -1,7 +1,7 @@
 // ============ PATH CONFIG ============
 // If your current HTML uses "../wavs/...", keep "../wavs".
 // If index.html is in project root and wavs is also in root, use "./wavs".
-const BASE_PATH = "../wavs";
+const BASE_PATH = "./wavs";
 
 // Methods (columns) - keep consistent across all sections
 const METHODS = [
