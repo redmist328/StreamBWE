@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StreamBWE</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <!-- Bulma + Icons (CDN, 不需要你再放本地文件) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- Your styles -->
+  <link rel="stylesheet" href="css/index.css" />
+</head>
+
+<body>
+  <!-- Header -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">
+              StreamBWE: A Streamable and Efficient Neural Model for Speech Bandwidth Extension in MDCT Spectral Domain
+            </h1>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><a>Yuan Tian</a>,</span>
+              <span class="author-block"><a href="https://faculty.ustc.edu.cn/aiyang/zh_CN/index.htm" target="_blank" rel="noreferrer">Yang Ai</a>,</span>
+              <span class="author-block"><a>Hui-Peng Du</a>,</span>
+              <span class="author-block"><a href="https://yxlu-0102.github.io/" target="_blank" rel="noreferrer">Ye-Xin Lu</a>,</span>
+              <span class="author-block"><a href="http://staff.ustc.edu.cn/~zhling" target="_blank" rel="noreferrer">Zhen-Hua Ling</a></span>
+            </div>
+
+            <!-- 你要加 Code/Paper 按钮，取消注释并换链接即可 -->
+            <!--
+            <div class="buttons is-centered mt-4">
+              <a class="button is-dark is-rounded" href="YOUR_GITHUB" target="_blank" rel="noreferrer">
+                <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+              </a>
+              <a class="button is-dark is-rounded" href="YOUR_ARXIV" target="_blank" rel="noreferrer">
+                <span class="icon"><i class="ai ai-arxiv"></i></span><span>Paper</span>
+              </a>
+            </div>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p id="abstract">
+              This paper proposes StreamBWE, a streaming-capable neural model for speech bandwidth extension (BWE), formulated in the modified discrete cosine transform (MDCT) spectral domain.
+              By adopting a fully causal architecture and modeling the compact, real-valued MDCT spectrum, the proposed StreamBWE supports low-latency streaming inference while using lightweight modules suitable for real-time, low-resource scenarios.
+              In particular, StreamBWE begins by deriving the narrowband MDCT spectrum from the input narrowband speech.
+              A lightweight, fully causal-convolutional SnBeConvNeXt model, that is, a ConvNeXt backbone equipped with SnakeBeta periodic activations, is subsequently employed to estimate the wideband MDCT spectrum, which is finally converted to a waveform via inverse MDCT (IMDCT).
+              We train StreamBWE adversarially with a multi-resolution MDCT discriminator (MR-MDCTD) that judges MDCT spectra across time-frequency scales, and add a frequency-weighted MDCT spectral loss to emphasize high-frequency details.
+              Experimental results indicate that StreamBWE delivers comparable or superior quality and intelligibility on both 16 kHz and 48 kHz target sampling rates, with only 2.57 GFLOPs and under 2.5 ms latency, highlighting both computational efficiency and real-time capability.
+              In addition, cross-domain experiments and downstream applications further validate StreamBWE's robust generalization to other audio data and its practical deployability within streaming speech-coding pipelines.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Samples (auto-rendered) -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="content">
+        <div class="sample-toolbar">
+          <div class="field">
+            <label class="label">Quick Jump</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="jumpSelect"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Layout</label>
+            <div class="control">
+              <div class="buttons">
+                <button class="button is-small" id="btnDense">Dense</button>
+                <button class="button is-small" id="btnComfort">Comfort</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="samplesRoot"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p class="is-size-7">
+        © StreamBWE Demo Page. Static site generated by <code>js/data.js</code>.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Data + Renderer -->
+  <script src="js/data.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
