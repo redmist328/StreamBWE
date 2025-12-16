@@ -1,46 +1,106 @@
-window.HELP_IMPROVE_VIDEOJS = false;
+function el(tag, attrs = {}, children = []) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v;
+    else if (k === "html") node.innerHTML = v;
+    else if (k.startsWith("on") && typeof v === "function") node.addEventListener(k.slice(2), v);
+    else node.setAttribute(k, v);
+  }
+  for (const c of children) node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  return node;
+}
 
+function buildAssetPath(sectionDir, methodKey, sampleKey, ext) {
+  // e.g. "../wavs/8kto16k/Narrowband/p362_225.png"
+  return `${BASE_PATH}/${sectionDir}/${methodKey}/${sampleKey}.${ext}`;
+}
 
-$(document).ready(function() {
-    // Check for click events on the navbar burger icon
+function renderSampleTable(sectionDir, sampleKey) {
+  const thead = el("thead", {}, [
+    el("tr", {}, METHODS.map(m => el("th", {}, [m.label])))
+  ]);
 
-    var options = {
-			slidesToScroll: 1,
-			slidesToShow: 1,
-			loop: true,
-			infinite: true,
-			autoplay: false,
-			autoplaySpeed: 3000,
-    }
+  const imgRow = el("tr", {}, METHODS.map(m => {
+    const src = buildAssetPath(sectionDir, m.key, sampleKey, "png");
+    return el("td", {}, [
+      el("img", { class: "demo-img", src, loading: "lazy", alt: `${m.label}-${sampleKey}` })
+    ]);
+  }));
 
-		// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
+  const audioRow = el("tr", {}, METHODS.map(m => {
+    const src = buildAssetPath(sectionDir, m.key, sampleKey, "wav");
+    const audio = el("audio", { class: "demo-audio", controls: "" }, [
+      el("source", { src, type: "audio/wav" })
+    ]);
+    return el("td", {}, [audio]);
+  }));
 
-    // Loop on each carousel initialized
-    for(var i = 0; i < carousels.length; i++) {
-    	// Add listener to  event
-    	carousels[i].on('before:show', state => {
-    		console.log(state);
-    	});
-    }
+  const tbody = el("tbody", {}, [imgRow, audioRow]);
 
-    // Access to bulmaCarousel instance of an element
-    var element = document.querySelector('#my-element');
-    if (element && element.bulmaCarousel) {
-    	// bulmaCarousel instance is available as element.bulmaCarousel
-    	element.bulmaCarousel.on('before-show', function(state) {
-    		console.log(state);
-    	});
-    }
+  const table = el("table", { class: "demo-table" }, [thead, tbody]);
+  return el("div", { class: "table-wrap" }, [table]);
+}
 
-    /*var player = document.getElementById('interpolation-video');
-    player.addEventListener('loadedmetadata', function() {
-      $('#interpolation-slider').on('input', function(event) {
-        console.log(this.value, player.duration);
-        player.currentTime = player.duration / 100 * this.value;
-      })
-    }, false);*/
+function renderSection(section) {
+  const sectionAnchor = el("div", { id: section.id });
 
-    bulmaSlider.attach();
+  const title = el("h2", { class: "title is-3 sample-section-title" }, [section.title]);
+  const badge = el("span", { class: "badge" }, [
+    el("i", { class: "fa-solid fa-layer-group" }),
+    `${section.samples.length} samples`
+  ]);
 
-})
+  const headerRow = el("div", { class: "is-flex is-justify-content-space-between is-align-items-center" }, [
+    title,
+    el("div", {}, [badge]),
+  ]);
+
+  const block = el("div", {}, [headerRow]);
+
+  section.samples.forEach((sampleKey, idx) => {
+    const card = el("div", { class: "sample-card" }, [
+      el("h3", { class: "title is-5" }, [`Sample ${idx + 1}`, " ", el("span", { class: "has-text-grey is-size-7" }, [`(${sampleKey})`])]),
+      renderSampleTable(section.dir, sampleKey),
+    ]);
+    block.appendChild(card);
+  });
+
+  return el("div", {}, [
+    sectionAnchor,
+    block,
+    el("div", { class: "section-divider" })
+  ]);
+}
+
+function initJumpSelect() {
+  const sel = document.getElementById("jumpSelect");
+  sel.innerHTML = "";
+  SECTIONS.forEach(s => {
+    sel.appendChild(el("option", { value: s.id }, [s.title]));
+  });
+  sel.addEventListener("change", () => {
+    const id = sel.value;
+    const target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function initLayoutButtons() {
+  const dense = document.getElementById("btnDense");
+  const comfort = document.getElementById("btnComfort");
+
+  dense.addEventListener("click", () => document.body.classList.add("is-dense"));
+  comfort.addEventListener("click", () => document.body.classList.remove("is-dense"));
+}
+
+function main() {
+  const root = document.getElementById("samplesRoot");
+  root.innerHTML = "";
+
+  SECTIONS.forEach(sec => root.appendChild(renderSection(sec)));
+
+  initJumpSelect();
+  initLayoutButtons();
+}
+
+document.addEventListener("DOMContentLoaded", main);
